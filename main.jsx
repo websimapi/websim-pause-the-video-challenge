@@ -90,14 +90,15 @@ const App = () => {
       const player = playerRef.current;
       if (!player) throw new Error("Player not ready");
       const containerCandidates = [
-        player.container || player.root || null,
+        // protect accesses in case these props don't exist on the player object
+        player && (player.container || player.root) || null,
         document.getElementById("app"),
         document
       ].filter(Boolean);
       let videoEl = null;
       for (const c of containerCandidates) {
         try {
-          const found = c.querySelector ? c.querySelector("video") : null;
+          const found = c && c.querySelector ? c.querySelector("video") : null;
           if (found) {
             videoEl = found;
             break;
@@ -109,8 +110,8 @@ const App = () => {
         alert("Unable to locate internal player video element to record. Download simulated.");
         return;
       }
-      player.seekTo(0);
-      await player.play();
+      if (player.seekTo) player.seekTo(0);
+      if (player.play) await player.play();
       const stream = videoEl.captureStream ? videoEl.captureStream() : videoEl.mozCaptureStream ? videoEl.mozCaptureStream() : null;
       if (!stream) {
         alert("Recording not supported in this browser.");
@@ -146,18 +147,25 @@ const App = () => {
   useEffect(() => {
     let intervalId;
     let timeoutId;
-    if (gameState === "replay" && replayData && playerRef.current) {
+    if (gameState === "replay" && replayData) {
       const player = playerRef.current;
-      player.seekTo(0);
-      player.play().catch(() => {
-      });
+      if (!player) return;
+      if (player.seekTo) {
+        player.seekTo(0);
+      }
+      if (player.play) {
+        player.play().catch(() => {
+        });
+      }
       isReplayPausedRef.current = false;
       intervalId = setInterval(() => {
-        if (isReplayPausedRef.current || !player) return;
-        const currentFrame = Math.round(player.getCurrentFrame());
+        if (isReplayPausedRef.current) return;
+        const p = playerRef.current;
+        if (!p || typeof p.getCurrentFrame !== "function") return;
+        const currentFrame = Math.round(p.getCurrentFrame());
         if (currentFrame >= replayData.stopFrame) {
-          player.pause();
-          player.seekTo(replayData.stopFrame);
+          if (p.pause) p.pause();
+          if (p.seekTo) p.seekTo(replayData.stopFrame);
           isReplayPausedRef.current = true;
           if (replayData.resultMessage === "PERFECT!") {
             winSound.current.currentTime = 0;
@@ -170,8 +178,8 @@ const App = () => {
           }
           timeoutId = setTimeout(() => {
             if (gameState === "replay" && playerRef.current) {
-              playerRef.current.seekTo(0);
-              playerRef.current.play().catch(() => {
+              if (playerRef.current.seekTo) playerRef.current.seekTo(0);
+              if (playerRef.current.play) playerRef.current.play().catch(() => {
               });
               isReplayPausedRef.current = false;
             }
@@ -202,38 +210,38 @@ const App = () => {
       /* @__PURE__ */ jsxDEV("div", { className: "flex flex-col", children: [
         /* @__PURE__ */ jsxDEV("h1", { className: "text-2xl font-bold text-white retro-font text-shadow", children: "TIMING MASTER" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 261,
+          lineNumber: 269,
           columnNumber: 13
         }),
         /* @__PURE__ */ jsxDEV("p", { className: "text-slate-400 text-xs", children: "Press SPACE or Click Button" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 262,
+          lineNumber: 270,
           columnNumber: 13
         })
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 260,
+        lineNumber: 268,
         columnNumber: 9
       }),
       /* @__PURE__ */ jsxDEV("div", { className: "text-right", children: [
         /* @__PURE__ */ jsxDEV("div", { className: "text-sm text-slate-400", children: "SCORE" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 265,
+          lineNumber: 273,
           columnNumber: 13
         }),
         /* @__PURE__ */ jsxDEV("div", { className: "text-3xl font-bold text-yellow-400 retro-font", children: score }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 266,
+          lineNumber: 274,
           columnNumber: 13
         })
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 264,
+        lineNumber: 272,
         columnNumber: 9
       })
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 259,
+      lineNumber: 267,
       columnNumber: 7
     }),
     /* @__PURE__ */ jsxDEV("div", { className: "relative w-full max-w-[500px] aspect-[9/16] bg-black shadow-2xl rounded-xl overflow-hidden border border-slate-800", children: [
@@ -260,19 +268,19 @@ const App = () => {
         false,
         {
           fileName: "<stdin>",
-          lineNumber: 272,
+          lineNumber: 280,
           columnNumber: 9
         }
       ),
       gameState === "menu" && /* @__PURE__ */ jsxDEV("div", { className: "absolute inset-0 bg-black/80 flex flex-col items-center justify-center z-30 animate-fade-in", children: [
         /* @__PURE__ */ jsxDEV(Trophy, { className: "w-20 h-20 text-yellow-400 mb-6" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 296,
+          lineNumber: 304,
           columnNumber: 17
         }),
         /* @__PURE__ */ jsxDEV("h1", { className: "text-4xl font-bold text-white mb-8 retro-font text-center px-4", children: "READY?" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 297,
+          lineNumber: 305,
           columnNumber: 17
         }),
         /* @__PURE__ */ jsxDEV(
@@ -286,13 +294,13 @@ const App = () => {
           false,
           {
             fileName: "<stdin>",
-            lineNumber: 298,
+            lineNumber: 306,
             columnNumber: 17
           }
         )
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 295,
+        lineNumber: 303,
         columnNumber: 13
       }),
       gameState === "playing" && /* @__PURE__ */ jsxDEV(
@@ -306,11 +314,11 @@ const App = () => {
           },
           children: /* @__PURE__ */ jsxDEV("div", { className: "absolute bottom-10 left-0 right-0 text-center", children: /* @__PURE__ */ jsxDEV("div", { className: "inline-block bg-red-600 text-white px-8 py-4 rounded-lg font-black text-2xl animate-bounce shadow-lg border-2 border-red-400", children: "STOP!" }, void 0, false, {
             fileName: "<stdin>",
-            lineNumber: 316,
+            lineNumber: 324,
             columnNumber: 21
           }) }, void 0, false, {
             fileName: "<stdin>",
-            lineNumber: 315,
+            lineNumber: 323,
             columnNumber: 17
           })
         },
@@ -318,19 +326,19 @@ const App = () => {
         false,
         {
           fileName: "<stdin>",
-          lineNumber: 309,
+          lineNumber: 317,
           columnNumber: 13
         }
       ),
       gameState === "won" && /* @__PURE__ */ jsxDEV("div", { className: "absolute inset-0 bg-green-900/80 backdrop-blur-sm flex flex-col items-center justify-center z-40 animate-fade-in", children: [
         /* @__PURE__ */ jsxDEV("h2", { className: "text-5xl font-black text-white italic drop-shadow-lg mb-2", children: resultMessage }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 326,
+          lineNumber: 334,
           columnNumber: 17
         }),
         /* @__PURE__ */ jsxDEV("div", { className: "text-green-300 mb-8 font-mono", children: "Precision Strike!" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 327,
+          lineNumber: 335,
           columnNumber: 17
         }),
         /* @__PURE__ */ jsxDEV(
@@ -344,7 +352,7 @@ const App = () => {
           false,
           {
             fileName: "<stdin>",
-            lineNumber: 328,
+            lineNumber: 336,
             columnNumber: 17
           }
         ),
@@ -357,7 +365,7 @@ const App = () => {
               children: [
                 /* @__PURE__ */ jsxDEV(RotateCcw, { className: "w-4 h-4 mr-2" }, void 0, false, {
                   fileName: "<stdin>",
-                  lineNumber: 339,
+                  lineNumber: 347,
                   columnNumber: 25
                 }),
                 " Watch Replay"
@@ -367,7 +375,7 @@ const App = () => {
             true,
             {
               fileName: "<stdin>",
-              lineNumber: 335,
+              lineNumber: 343,
               columnNumber: 21
             }
           ),
@@ -379,7 +387,7 @@ const App = () => {
               children: [
                 /* @__PURE__ */ jsxDEV(Download, { className: "w-3 h-3 mr-2" }, void 0, false, {
                   fileName: "<stdin>",
-                  lineNumber: 345,
+                  lineNumber: 353,
                   columnNumber: 25
                 }),
                 " Download Replay"
@@ -389,34 +397,34 @@ const App = () => {
             true,
             {
               fileName: "<stdin>",
-              lineNumber: 341,
+              lineNumber: 349,
               columnNumber: 21
             }
           )
         ] }, void 0, true, {
           fileName: "<stdin>",
-          lineNumber: 334,
+          lineNumber: 342,
           columnNumber: 17
         })
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 325,
+        lineNumber: 333,
         columnNumber: 13
       }),
       gameState === "lost" && /* @__PURE__ */ jsxDEV("div", { className: "absolute inset-0 bg-red-900/90 backdrop-blur-sm flex flex-col items-center justify-center z-40 animate-fade-in", children: [
         /* @__PURE__ */ jsxDEV(Skull, { className: "w-16 h-16 text-white mb-4 animate-pulse" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 354,
+          lineNumber: 362,
           columnNumber: 17
         }),
         /* @__PURE__ */ jsxDEV("h2", { className: "text-4xl font-black text-white mb-2", children: resultMessage }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 355,
+          lineNumber: 363,
           columnNumber: 17
         }),
         /* @__PURE__ */ jsxDEV("div", { className: "text-red-200 mb-8 font-mono", children: "Better luck next time" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 356,
+          lineNumber: 364,
           columnNumber: 17
         }),
         /* @__PURE__ */ jsxDEV("div", { className: "flex gap-4", children: /* @__PURE__ */ jsxDEV(
@@ -434,12 +442,12 @@ const App = () => {
           false,
           {
             fileName: "<stdin>",
-            lineNumber: 359,
+            lineNumber: 367,
             columnNumber: 21
           }
         ) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 358,
+          lineNumber: 366,
           columnNumber: 17
         }),
         /* @__PURE__ */ jsxDEV("div", { className: "flex flex-col gap-2 mt-6 items-center", children: /* @__PURE__ */ jsxDEV(
@@ -450,7 +458,7 @@ const App = () => {
             children: [
               /* @__PURE__ */ jsxDEV(RotateCcw, { className: "w-4 h-4 mr-2" }, void 0, false, {
                 fileName: "<stdin>",
-                lineNumber: 371,
+                lineNumber: 379,
                 columnNumber: 25
               }),
               " See Where You Failed"
@@ -460,27 +468,27 @@ const App = () => {
           true,
           {
             fileName: "<stdin>",
-            lineNumber: 367,
+            lineNumber: 375,
             columnNumber: 21
           }
         ) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 366,
+          lineNumber: 374,
           columnNumber: 17
         })
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 353,
+        lineNumber: 361,
         columnNumber: 13
       }),
       gameState === "replay" && /* @__PURE__ */ jsxDEV("div", { className: "absolute inset-0 pointer-events-none z-30", children: [
         /* @__PURE__ */ jsxDEV("div", { className: "absolute top-4 left-0 right-0 text-center", children: /* @__PURE__ */ jsxDEV("span", { className: "bg-red-600 text-white px-2 py-1 text-xs font-bold uppercase tracking-widest animate-pulse", children: "Instant Replay" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 381,
+          lineNumber: 389,
           columnNumber: 22
         }) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 380,
+          lineNumber: 388,
           columnNumber: 18
         }),
         /* @__PURE__ */ jsxDEV("div", { className: "absolute bottom-10 left-0 right-0 flex justify-center pointer-events-auto", children: /* @__PURE__ */ jsxDEV(
@@ -494,37 +502,37 @@ const App = () => {
           false,
           {
             fileName: "<stdin>",
-            lineNumber: 384,
+            lineNumber: 392,
             columnNumber: 22
           }
         ) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 383,
+          lineNumber: 391,
           columnNumber: 18
         })
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 379,
+        lineNumber: 387,
         columnNumber: 14
       })
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 271,
+      lineNumber: 279,
       columnNumber: 7
     }),
     /* @__PURE__ */ jsxDEV("div", { className: "mt-4 text-slate-500 text-xs max-w-[300px] text-center", children: "Difficulty increases every round. Reaction window gets faster." }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 396,
+      lineNumber: 404,
       columnNumber: 7
     })
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 256,
+    lineNumber: 264,
     columnNumber: 5
   });
 };
 createRoot(document.getElementById("app")).render(/* @__PURE__ */ jsxDEV(App, {}, void 0, false, {
   fileName: "<stdin>",
-  lineNumber: 404,
+  lineNumber: 412,
   columnNumber: 51
 }));
