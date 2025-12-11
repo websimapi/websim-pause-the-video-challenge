@@ -1,6 +1,6 @@
 import { jsxDEV } from "react/jsx-dev-runtime";
 import React from "react";
-import { AbsoluteFill, Sequence, useCurrentFrame, interpolate, spring, useVideoConfig, Audio, staticFile } from "remotion";
+import { AbsoluteFill, Sequence, useCurrentFrame, interpolate, spring, useVideoConfig, Audio } from "remotion";
 const VIDEO_FPS = 60;
 const COUNTDOWN_DURATION = 180;
 const SLIDE_DURATION = 90;
@@ -13,20 +13,21 @@ const CountdownNumber = ({ number }) => {
     frame,
     config: { damping: 10, stiffness: 100 }
   });
-  const opacity = interpolate(frame, [0, 40, 50], [0, 1, 0], {
-    extrapolateRight: "clamp"
+  const opacity = interpolate(frame, [0, 5, 45, 50], [1, 1, 1, 0], {
+    extrapolateRight: "clamp",
+    extrapolateLeft: "clamp"
   });
   return /* @__PURE__ */ jsxDEV(AbsoluteFill, { className: "flex items-center justify-center", children: /* @__PURE__ */ jsxDEV("div", { style: { transform: `scale(${scale})`, opacity }, children: /* @__PURE__ */ jsxDEV("h1", { className: "text-9xl font-black text-white retro-font drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]", children: number }, void 0, false, {
     fileName: "<stdin>",
-    lineNumber: 27,
+    lineNumber: 28,
     columnNumber: 9
   }) }, void 0, false, {
     fileName: "<stdin>",
-    lineNumber: 26,
+    lineNumber: 27,
     columnNumber: 7
   }) }, void 0, false, {
     fileName: "<stdin>",
-    lineNumber: 25,
+    lineNumber: 26,
     columnNumber: 5
   });
 };
@@ -45,7 +46,7 @@ const GameBar = ({ speedMultiplier = 1, targetPosition = 0.7 }) => {
   return /* @__PURE__ */ jsxDEV(AbsoluteFill, { className: "flex flex-col items-center justify-center bg-slate-900", children: [
     /* @__PURE__ */ jsxDEV("h2", { className: "text-4xl text-white mb-20 font-bold uppercase tracking-widest animate-pulse", children: "Stop on Green!" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 54,
+      lineNumber: 55,
       columnNumber: 7
     }),
     /* @__PURE__ */ jsxDEV(
@@ -68,7 +69,7 @@ const GameBar = ({ speedMultiplier = 1, targetPosition = 0.7 }) => {
             false,
             {
               fileName: "<stdin>",
-              lineNumber: 64,
+              lineNumber: 65,
               columnNumber: 9
             }
           ),
@@ -84,17 +85,17 @@ const GameBar = ({ speedMultiplier = 1, targetPosition = 0.7 }) => {
             false,
             {
               fileName: "<stdin>",
-              lineNumber: 74,
+              lineNumber: 75,
               columnNumber: 9
             }
           ),
           /* @__PURE__ */ jsxDEV("div", { className: "absolute inset-0 flex justify-between px-2 opacity-20", children: [...Array(10)].map((_, i) => /* @__PURE__ */ jsxDEV("div", { className: "w-0.5 h-full bg-white" }, i, false, {
             fileName: "<stdin>",
-            lineNumber: 84,
+            lineNumber: 85,
             columnNumber: 16
           })) }, void 0, false, {
             fileName: "<stdin>",
-            lineNumber: 82,
+            lineNumber: 83,
             columnNumber: 9
           })
         ]
@@ -103,85 +104,85 @@ const GameBar = ({ speedMultiplier = 1, targetPosition = 0.7 }) => {
       true,
       {
         fileName: "<stdin>",
-        lineNumber: 59,
+        lineNumber: 60,
         columnNumber: 7
       }
     ),
     /* @__PURE__ */ jsxDEV("div", { className: "mt-8 text-slate-400 font-mono text-xl", children: "PRESS STOP NOW" }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 89,
+      lineNumber: 90,
       columnNumber: 7
     })
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 53,
+    lineNumber: 54,
     columnNumber: 5
   });
 };
 const GameComposition = ({ difficulty = 1, seed = 123 }) => {
   const pseudoRandom = (seed * 9301 + 49297) % 233280 / 233280;
   const targetPos = 0.3 + pseudoRandom * 0.5;
-  return /* @__PURE__ */ jsxDEV(AbsoluteFill, { className: "bg-black", children: [
+  return /* @__PURE__ */ jsxDEV(AbsoluteFill, { className: "bg-slate-950", children: [
     /* @__PURE__ */ jsxDEV(Sequence, { from: 0, durationInFrames: 60, children: [
-      /* @__PURE__ */ jsxDEV(Audio, { src: staticFile("sfx_countdown.mp3") }, void 0, false, {
+      /* @__PURE__ */ jsxDEV(Audio, { src: "sfx_countdown.mp3" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 107,
+        lineNumber: 108,
         columnNumber: 9
       }),
       /* @__PURE__ */ jsxDEV(CountdownNumber, { number: "3" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 108,
+        lineNumber: 109,
         columnNumber: 9
       })
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 106,
+      lineNumber: 107,
       columnNumber: 7
     }),
     /* @__PURE__ */ jsxDEV(Sequence, { from: 60, durationInFrames: 60, children: [
-      /* @__PURE__ */ jsxDEV(Audio, { src: staticFile("sfx_countdown.mp3") }, void 0, false, {
+      /* @__PURE__ */ jsxDEV(Audio, { src: "sfx_countdown.mp3" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 113,
+        lineNumber: 114,
         columnNumber: 9
       }),
       /* @__PURE__ */ jsxDEV(CountdownNumber, { number: "2" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 114,
+        lineNumber: 115,
         columnNumber: 9
       })
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 112,
+      lineNumber: 113,
       columnNumber: 7
     }),
     /* @__PURE__ */ jsxDEV(Sequence, { from: 120, durationInFrames: 60, children: [
-      /* @__PURE__ */ jsxDEV(Audio, { src: staticFile("sfx_countdown.mp3"), volume: 1.5 }, void 0, false, {
+      /* @__PURE__ */ jsxDEV(Audio, { src: "sfx_countdown.mp3", volume: 1.5 }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 119,
+        lineNumber: 120,
         columnNumber: 9
       }),
       /* @__PURE__ */ jsxDEV(CountdownNumber, { number: "1" }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 120,
+        lineNumber: 121,
         columnNumber: 9
       })
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 118,
+      lineNumber: 119,
       columnNumber: 7
     }),
     /* @__PURE__ */ jsxDEV(Sequence, { from: COUNTDOWN_DURATION, children: /* @__PURE__ */ jsxDEV(GameBar, { speedMultiplier: difficulty, targetPosition: targetPos }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 125,
+      lineNumber: 126,
       columnNumber: 9
     }) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 124,
+      lineNumber: 125,
       columnNumber: 7
     })
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 104,
+    lineNumber: 105,
     columnNumber: 5
   });
 };
