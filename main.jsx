@@ -1,7 +1,7 @@
 import { jsxDEV } from "react/jsx-dev-runtime";
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { createRoot } from "react-dom/client";
-import { Player } from "@websim/remotion/player";
+import { Player } from "@remotion/player";
 import { GameComposition, VIDEO_FPS, COUNTDOWN_DURATION, SLIDE_DURATION, TOTAL_DURATION } from "./composition.jsx";
 import { Play, RotateCcw, Trophy, Skull, Download } from "lucide-react";
 const App = () => {
@@ -168,7 +168,7 @@ const App = () => {
           columnNumber: 9
         }
       ),
-      gameState === "menu" && /* @__PURE__ */ jsxDEV("div", { className: "absolute inset-0 bg-black/80 flex flex-col items-center justify-center z-30 animate-in fade-in duration-300", children: [
+      gameState === "menu" && /* @__PURE__ */ jsxDEV("div", { className: "absolute inset-0 bg-black/80 flex flex-col items-center justify-center z-30 animate-fade-in", children: [
         /* @__PURE__ */ jsxDEV(Trophy, { className: "w-20 h-20 text-yellow-400 mb-6" }, void 0, false, {
           fileName: "<stdin>",
           lineNumber: 190,
@@ -226,7 +226,7 @@ const App = () => {
           columnNumber: 13
         }
       ),
-      gameState === "won" && /* @__PURE__ */ jsxDEV("div", { className: "absolute inset-0 bg-green-900/80 backdrop-blur-sm flex flex-col items-center justify-center z-40 animate-in zoom-in duration-200", children: [
+      gameState === "won" && /* @__PURE__ */ jsxDEV("div", { className: "absolute inset-0 bg-green-900/80 backdrop-blur-sm flex flex-col items-center justify-center z-40 animate-fade-in", children: [
         /* @__PURE__ */ jsxDEV("h2", { className: "text-5xl font-black text-white italic drop-shadow-lg mb-2", children: resultMessage }, void 0, false, {
           fileName: "<stdin>",
           lineNumber: 220,
@@ -307,7 +307,7 @@ const App = () => {
         lineNumber: 219,
         columnNumber: 13
       }),
-      gameState === "lost" && /* @__PURE__ */ jsxDEV("div", { className: "absolute inset-0 bg-red-900/90 backdrop-blur-sm flex flex-col items-center justify-center z-40 animate-in zoom-in duration-200", children: [
+      gameState === "lost" && /* @__PURE__ */ jsxDEV("div", { className: "absolute inset-0 bg-red-900/90 backdrop-blur-sm flex flex-col items-center justify-center z-40 animate-fade-in", children: [
         /* @__PURE__ */ jsxDEV(Skull, { className: "w-16 h-16 text-white mb-4 animate-pulse" }, void 0, false, {
           fileName: "<stdin>",
           lineNumber: 248,
